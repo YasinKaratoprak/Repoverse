@@ -1,0 +1,60 @@
+@import "tailwindcss";
+@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Inter:wght@400;500;600;700;800&display=swap');
+
+/* ============================================================
+   Custom Theme - Cyber Dark Mode
+   ============================================================ */
+@theme {
+  --color-cyber-bg: #0a0a0f;
+  --color-cyber-surface: #12121a;
+  --color-cyber-card: #1a1a2e;
+  --color-cyber-card-hover: #222240;
+  --color-cyber-border: #2a2a4a;
+  --color-cyber-border-glow: #00ff9955;
+  --color-cyber-green: #00ff99;
+  --color-cyber-green-dim: #00cc7a;
+  --color-cyber-blue: #00d4ff;
+  --color-cyber-blue-dim: #0099cc;
+  --color-cyber-purple: #a855f7;
+  --color-cyber-red: #ff4444;
+  --color-cyber-text: #e0e0e0;
+  --color-cyber-text-dim: #8888aa;
+  --color-cyber-disabled: #444466;
+  --color-cyber-terminal: #0d0d14;
+}
+
+/* ============================================================
+   Google Fonts Import
+   ============================================================ */
+
+/* ============================================================
+   Base Styles
+   ============================================================ */
+body {
+  font-family: 'Inter', sans-serif;
+  background-color: var(--color-cyber-bg);
+  color: var(--color-cyber-text);
+  overflow-x: hidden;
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: var(--color-cyber-surface);
+}
+::-webkit-scrollbar-thumb {
+  background: var(--color-cyber-border);
+  border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--color-cyber-green);
+}
+
+/* Selection color */
+::selection {
+  background: #00ff9933;
+  color: var(--color-cyber-green);
+}
