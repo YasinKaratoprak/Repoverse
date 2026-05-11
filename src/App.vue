@@ -254,7 +254,7 @@ const catColor = (cat) => ({
             <p class="text-xs text-cyber-text-dim">Terminal Script Generator</p>
           </div>
         </div>
-        <span class="hidden text-xs text-cyber-text-dim sm:block">v1.0 — Step 1</span>
+
       </div>
     </header>
 
