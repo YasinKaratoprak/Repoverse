@@ -404,8 +404,9 @@ const catColor = (cat) => ({
     </main>
 
     <!-- ================ FOOTER ================ -->
-    <footer class="mt-16 border-t border-cyber-border bg-cyber-surface/50 py-6 text-center text-xs text-cyber-text-dim">
-      REPOVERSE © {{ new Date().getFullYear() }} — Built for developers & cybersecurity professionals
+    <footer class="mt-16 border-t border-cyber-border bg-cyber-surface/50 py-6 text-center text-xs text-cyber-text-dim flex flex-col items-center justify-center gap-2">
+      <p>REPOVERSE © {{ new Date().getFullYear() }} — Built for developers & cybersecurity professionals</p>
+      <p>For bugs, requests, and suggestions: <a href="mailto:contact@yasinkaratoprak.com" class="text-cyber-green hover:underline font-semibold transition-all">contact@yasinkaratoprak.com</a></p>
     </footer>
   </div>
 </template>
