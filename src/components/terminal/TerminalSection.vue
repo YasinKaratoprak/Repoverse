@@ -19,32 +19,32 @@ const copyScript = async () => {
     <div class="sticky top-24">
       
       <!-- Selected Apps Dropdown -->
-      <div class="mb-4 overflow-hidden rounded-xl border border-cyber-border bg-cyber-surface">
+      <div class="mb-4 overflow-hidden rounded-xl border border-ui-border bg-ui-surface">
         <button 
           @click="showSelectedApps = !showSelectedApps" 
-          class="flex w-full cursor-pointer items-center justify-between px-4 py-3 text-sm font-medium text-cyber-text transition hover:bg-cyber-card"
+          class="flex w-full cursor-pointer items-center justify-between px-4 py-3 text-sm font-medium text-ui-text transition hover:bg-ui-card"
         >
           <div class="flex items-center gap-2">
-            <span class="text-cyber-green">📦</span>
+            <span class="text-ui-primary">📦</span>
             <span>Selected Apps</span>
-            <span class="rounded bg-cyber-green/20 px-2 py-0.5 text-xs text-cyber-green">{{ selectedTools.size }}</span>
+            <span class="rounded bg-ui-primary/20 px-2 py-0.5 text-xs text-ui-primary">{{ selectedTools.size }}</span>
           </div>
           <svg :class="['h-4 w-4 transition-transform duration-300', showSelectedApps ? 'rotate-180' : '']" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
           </svg>
         </button>
         
-        <div v-show="showSelectedApps" class="max-h-60 overflow-y-auto border-t border-cyber-border bg-cyber-card p-2">
-          <div v-if="selectedToolsList.length === 0" class="p-4 text-center text-xs text-cyber-text-dim">
+        <div v-show="showSelectedApps" class="max-h-60 overflow-y-auto border-t border-ui-border bg-ui-card p-2">
+          <div v-if="selectedToolsList.length === 0" class="p-4 text-center text-xs text-ui-text-muted">
             No apps selected yet.
           </div>
           <ul v-else class="flex flex-col gap-1">
-            <li v-for="tool in selectedToolsList" :key="tool.id" class="flex items-center justify-between rounded p-2 text-xs transition-colors hover:bg-cyber-surface">
+            <li v-for="tool in selectedToolsList" :key="tool.id" class="flex items-center justify-between rounded p-2 text-xs transition-colors hover:bg-ui-surface">
               <div class="flex flex-col">
-                <span class="font-bold text-cyber-text">{{ tool.name }}</span>
-                <span class="text-[9px] text-cyber-text-dim uppercase tracking-wider">{{ tool.category }}</span>
+                <span class="font-bold text-ui-text">{{ tool.name }}</span>
+                <span class="text-[9px] text-ui-text-muted uppercase tracking-wider">{{ tool.category }}</span>
               </div>
-              <button @click="toggleTool(tool)" class="cursor-pointer p-1 text-cyber-red transition hover:text-red-400">
+              <button @click="toggleTool(tool)" class="cursor-pointer p-1 text-ui-danger transition hover:text-red-400">
                 <svg class="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
                 </svg>
@@ -55,15 +55,15 @@ const copyScript = async () => {
       </div>
 
       <!-- Terminal chrome -->
-      <div class="overflow-hidden rounded-xl border border-cyber-border shadow-2xl shadow-black/40">
+      <div class="overflow-hidden rounded-xl border border-ui-border shadow-2xl shadow-black/40">
         <!-- Title bar -->
-        <div class="flex items-center justify-between border-b border-cyber-border bg-cyber-surface px-4 py-2.5">
+        <div class="flex items-center justify-between border-b border-ui-border bg-ui-surface px-4 py-2.5">
           <div class="flex items-center gap-2">
-            <span class="h-3 w-3 rounded-full bg-cyber-red/80" />
+            <span class="h-3 w-3 rounded-full bg-ui-danger/80" />
             <span class="h-3 w-3 rounded-full bg-yellow-500/80" />
-            <span class="h-3 w-3 rounded-full bg-cyber-green/80" />
+            <span class="h-3 w-3 rounded-full bg-ui-primary/80" />
           </div>
-          <span class="text-xs text-cyber-text-dim" style="font-family:'JetBrains Mono',monospace">
+          <span class="text-xs text-ui-text-muted" style="font-family:'JetBrains Mono',monospace">
             {{ currentOS?.pm || 'shell' }} — bash
           </span>
           <button
@@ -71,8 +71,8 @@ const copyScript = async () => {
             :class="[
               'flex cursor-pointer items-center gap-1.5 rounded-lg border px-3 py-1 text-xs font-medium transition-all duration-300',
               copied
-                ? 'border-cyber-green/60 bg-cyber-green/20 text-cyber-green'
-                : 'border-cyber-border bg-cyber-card text-cyber-text-dim hover:border-cyber-green/40 hover:text-cyber-green'
+                ? 'border-ui-primary/60 bg-ui-primary/20 text-ui-primary'
+                : 'border-ui-border bg-ui-card text-ui-text-muted hover:border-ui-primary/40 hover:text-ui-primary'
             ]"
           >
             <svg v-if="!copied" class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
@@ -86,14 +86,14 @@ const copyScript = async () => {
           </button>
         </div>
         <!-- Terminal body -->
-        <div class="min-h-[300px] bg-cyber-terminal p-4 lg:min-h-[450px]">
-          <pre class="whitespace-pre-wrap break-all text-sm leading-relaxed text-cyber-green" style="font-family:'JetBrains Mono',monospace">{{ scriptOutput }}</pre>
-          <span class="mt-2 inline-block h-4 w-2 animate-pulse bg-cyber-green/70" />
+        <div class="min-h-[300px] bg-ui-terminal p-4 lg:min-h-[450px]">
+          <pre class="whitespace-pre-wrap break-all text-sm leading-relaxed text-ui-primary" style="font-family:'JetBrains Mono',monospace">{{ scriptOutput }}</pre>
+          <span class="mt-2 inline-block h-4 w-2 animate-pulse bg-ui-primary/70" />
         </div>
       </div>
 
       <!-- Stats bar -->
-      <div class="mt-3 flex items-center justify-between rounded-lg border border-cyber-border bg-cyber-surface px-4 py-2 text-xs text-cyber-text-dim">
+      <div class="mt-3 flex items-center justify-between rounded-lg border border-ui-border bg-ui-surface px-4 py-2 text-xs text-ui-text-muted">
         <span>{{ selectedTools.size }} tool{{ selectedTools.size !== 1 ? 's' : '' }} selected</span>
         <span>{{ currentOS?.label }}</span>
       </div>

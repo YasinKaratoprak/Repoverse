@@ -65,7 +65,7 @@ export const catColor = (cat) => ({
   utilities: 'text-cyan-400',
   compression: 'text-yellow-500',
   vcredist: 'text-slate-400',
-  dev: 'text-cyber-green',
+  dev: 'text-ui-primary',
   gaming: 'text-emerald-400',
   infogathering: 'text-cyan-400',
   vulnanalysis: 'text-orange-500',
@@ -78,7 +78,7 @@ export const catColor = (cat) => ({
   reverseengineering: 'text-pink-500',
   maintainingaccess: 'text-green-600',
   socialengineering: 'text-rose-400',
-}[cat] || 'text-cyber-text-dim')
+}[cat] || 'text-ui-text-muted')
 
 export const categories = computed(() => {
   const cats = [...new Set(tools.value.map(t => t.category))]

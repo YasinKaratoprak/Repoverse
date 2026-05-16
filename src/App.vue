@@ -7,7 +7,7 @@ import TerminalSection from './components/terminal/TerminalSection.vue'
 </script>
 
 <template>
-  <div class="min-h-screen bg-cyber-bg text-cyber-text">
+  <div class="min-h-screen bg-ui-bg text-ui-text">
     <AppHeader />
 
     <main class="mx-auto max-w-7xl px-6 py-8">

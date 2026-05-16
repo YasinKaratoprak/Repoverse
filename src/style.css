@@ -5,22 +5,22 @@
    Custom Theme - Cyber Dark Mode
    ============================================================ */
 @theme {
-  --color-cyber-bg: #0a0a0f;
-  --color-cyber-surface: #12121a;
-  --color-cyber-card: #1a1a2e;
-  --color-cyber-card-hover: #222240;
-  --color-cyber-border: #2a2a4a;
-  --color-cyber-border-glow: #00ff9955;
-  --color-cyber-green: #00ff99;
-  --color-cyber-green-dim: #00cc7a;
-  --color-cyber-blue: #00d4ff;
-  --color-cyber-blue-dim: #0099cc;
-  --color-cyber-purple: #a855f7;
-  --color-cyber-red: #ff4444;
-  --color-cyber-text: #e0e0e0;
-  --color-cyber-text-dim: #8888aa;
-  --color-cyber-disabled: #444466;
-  --color-cyber-terminal: #0d0d14;
+  --color-ui-bg: #0a0a0f;
+  --color-ui-surface: #12121a;
+  --color-ui-card: #1a1a2e;
+  --color-ui-hover: #222240;
+  --color-ui-border: #2a2a4a;
+  --color-ui-glow: #00ff9955;
+  --color-ui-primary: #00ff99;
+  --color-ui-primary-dim: #00cc7a;
+  --color-ui-info: #00d4ff;
+  --color-ui-info-dim: #0099cc;
+  --color-ui-accent: #a855f7;
+  --color-ui-danger: #ff4444;
+  --color-ui-text: #e0e0e0;
+  --color-ui-text-muted: #8888aa;
+  --color-ui-disabled: #444466;
+  --color-ui-terminal: #0d0d14;
 }
 
 /* ============================================================
@@ -32,8 +32,8 @@
    ============================================================ */
 body {
   font-family: 'Inter', sans-serif;
-  background-color: var(--color-cyber-bg);
-  color: var(--color-cyber-text);
+  background-color: var(--color-ui-bg);
+  color: var(--color-ui-text);
   overflow-x: hidden;
 }
 
@@ -42,19 +42,22 @@ body {
   width: 6px;
   height: 6px;
 }
+
 ::-webkit-scrollbar-track {
-  background: var(--color-cyber-surface);
+  background: var(--color-ui-surface);
 }
+
 ::-webkit-scrollbar-thumb {
-  background: var(--color-cyber-border);
+  background: var(--color-ui-border);
   border-radius: 3px;
 }
+
 ::-webkit-scrollbar-thumb:hover {
-  background: var(--color-cyber-green);
+  background: var(--color-ui-primary);
 }
 
 /* Selection color */
 ::selection {
   background: #00ff9933;
-  color: var(--color-cyber-green);
+  color: var(--color-ui-primary);
 }
