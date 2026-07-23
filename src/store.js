@@ -1,12 +1,39 @@
-import { ref, computed } from 'vue'
+import { ref, computed, watch } from 'vue'
 import toolsData from './data/tools.js'
+import repoSetup from './data/repos.js'
+
+// ============================================================
+// Persistence & shared links
+// ============================================================
+const STORAGE_KEY = 'repoverse-state'
+const validIds = new Set(toolsData.map(t => t.id))
+
+const loadState = () => {
+  try {
+    return JSON.parse(localStorage.getItem(STORAGE_KEY)) || {}
+  } catch {
+    return {}
+  }
+}
+const saved = loadState()
+
+// A shared link (?os=apt&tools=a,b,c) overrides the locally saved state
+const urlParams = new URLSearchParams(window.location.search)
+const urlOS = urlParams.get('os')
+const urlTools = (urlParams.get('tools') || '').split(',').filter(id => validIds.has(id))
+if (urlParams.has('os') || urlParams.has('tools')) {
+  // Strip the query so a later refresh keeps the user's own edits
+  history.replaceState(null, '', window.location.pathname)
+}
 
 // ============================================================
 // State
 // ============================================================
 export const tools = ref(toolsData)
-export const selectedOS = ref('apt')
-export const selectedTools = ref(new Set())
+export const selectedOS = ref(urlOS || saved.os || 'apt')
+export const selectedTools = ref(new Set(
+  urlTools.length ? urlTools : (Array.isArray(saved.tools) ? saved.tools.filter(id => validIds.has(id)) : [])
+))
 export const searchQuery = ref('')
 export const selectedCategory = ref('all')
 
@@ -19,6 +46,16 @@ export const osOptions = [
   { id: 'winget', label: 'Windows (Winget)', img: '/images/windows.png', pm: 'winget', prefix: 'winget install -e --id' },
   { id: 'flatpak', label: 'Universal (Flatpak)', img: '/images/flatpak.png', pm: 'flatpak', prefix: 'flatpak install -y flathub' },
 ]
+
+// Fall back to apt if the persisted OS id is no longer valid
+if (!osOptions.some(o => o.id === selectedOS.value)) selectedOS.value = 'apt'
+
+// Persist OS + tool selections across sessions
+watch([selectedOS, selectedTools], () => {
+  try {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify({ os: selectedOS.value, tools: [...selectedTools.value] }))
+  } catch { /* storage unavailable (private mode etc.) */ }
+})
 
 export const categoryLabels = {
   browser: '🌐 Browsers',
@@ -131,21 +168,42 @@ export const scriptOutput = computed(() => {
   const chosen = tools.value.filter(t => selectedTools.value.has(t.id) && isSupported(t))
   if (chosen.length === 0) return `# No tools selected — pick some from the grid above.\n# OS: ${os.label} (${os.pm})`
 
-  const isWinget = os.id === 'winget'
-  if (isWinget) {
-    return [
-      `# Terminal Installation Script`,
-      `# OS: ${os.label}`,
-      `# Generated: ${new Date().toLocaleDateString()}\n`,
-      ...chosen.map(t => `${os.prefix} ${t.packages[os.id]}`)
-    ].join('\n')
-  }
-
-  const pkgs = chosen.map(t => t.packages[os.id])
-  return [
-    `# Terminal Installation Script`,
+  const header = [
+    `# Repoverse — Terminal Installation Script`,
     `# OS: ${os.label}`,
     `# Generated: ${new Date().toLocaleDateString()}\n`,
-    `${os.prefix} ${pkgs.join(' ')}`
-  ].join('\n')
+  ]
+
+  // Winget runs in PowerShell/cmd — no shebang, one command per package
+  if (os.id === 'winget') {
+    return [...header, ...chosen.map(t => `${os.prefix} ${t.packages[os.id]}`)].join('\n')
+  }
+
+  const lines = ['#!/usr/bin/env bash', 'set -e\n', ...header]
+
+  // Register third-party repos (Chrome, VS Code, Spotify, ...) before installing
+  const repoTools = chosen.filter(t => repoSetup[t.id]?.[os.id])
+  if (repoTools.length > 0) {
+    lines.push('# --- Third-party repositories ---')
+    if (os.id === 'apt') lines.push('sudo install -d -m 0755 /etc/apt/keyrings')
+    for (const t of repoTools) {
+      lines.push(`# ${t.name}`)
+      lines.push(...repoSetup[t.id][os.id])
+    }
+    lines.push('')
+  }
+
+  if (os.id === 'apt') lines.push('sudo apt update')
+  const pkgs = chosen.map(t => t.packages[os.id])
+  lines.push(`${os.prefix} ${pkgs.join(' ')}`)
+  return lines.join('\n')
+})
+
+// ============================================================
+// Share link — encodes current OS + selections into a URL
+// ============================================================
+export const shareUrl = computed(() => {
+  const base = `${window.location.origin}${window.location.pathname}`
+  const ids = [...selectedTools.value].join(',')
+  return ids ? `${base}?os=${selectedOS.value}&tools=${ids}` : `${base}?os=${selectedOS.value}`
 })

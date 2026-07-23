@@ -1,9 +1,18 @@
 <script setup>
 import { ref } from 'vue'
-import { selectedTools, selectedToolsList, toggleTool, scriptOutput, currentOS } from '../../store.js'
+import { selectedTools, selectedToolsList, toggleTool, scriptOutput, currentOS, shareUrl } from '../../store.js'
 
 const showSelectedApps = ref(false)
 const copied = ref(false)
+const linkCopied = ref(false)
+
+const copyShareLink = async () => {
+  try {
+    await navigator.clipboard.writeText(shareUrl.value)
+    linkCopied.value = true
+    setTimeout(() => { linkCopied.value = false }, 2000)
+  } catch { alert('Copy failed — please copy manually.') }
+}
 
 const copyScript = async () => {
   try {
@@ -11,6 +20,18 @@ const copyScript = async () => {
     copied.value = true
     setTimeout(() => { copied.value = false }, 2000)
   } catch { alert('Copy failed — please copy manually.') }
+}
+
+const downloadScript = () => {
+  // Winget comments (#) are valid in PowerShell, so ship .ps1 there; bash otherwise
+  const filename = currentOS.value?.id === 'winget' ? 'repoverse-install.ps1' : 'repoverse-install.sh'
+  const blob = new Blob([scriptOutput.value + '\n'], { type: 'text/plain' })
+  const url = URL.createObjectURL(blob)
+  const a = document.createElement('a')
+  a.href = url
+  a.download = filename
+  a.click()
+  URL.revokeObjectURL(url)
 }
 </script>
 
@@ -66,24 +87,35 @@ const copyScript = async () => {
           <span class="text-xs text-ui-text-muted" style="font-family:'JetBrains Mono',monospace">
             {{ currentOS?.pm || 'shell' }} — bash
           </span>
-          <button
-            @click="copyScript"
-            :class="[
-              'flex cursor-pointer items-center gap-1.5 rounded-lg border px-3 py-1 text-xs font-medium transition-all duration-300',
-              copied
-                ? 'border-ui-primary/60 bg-ui-primary/20 text-ui-primary'
-                : 'border-ui-border bg-ui-card text-ui-text-muted hover:border-ui-primary/40 hover:text-ui-primary'
-            ]"
-          >
-            <svg v-if="!copied" class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-              <rect x="9" y="9" width="13" height="13" rx="2" ry="2"/>
-              <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>
-            </svg>
-            <svg v-else class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-              <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/>
-            </svg>
-            {{ copied ? 'Copied!' : 'Copy' }}
-          </button>
+          <div class="flex items-center gap-2">
+            <button
+              @click="downloadScript"
+              class="flex cursor-pointer items-center gap-1.5 rounded-lg border border-ui-border bg-ui-card px-3 py-1 text-xs font-medium text-ui-text-muted transition-all duration-300 hover:border-ui-primary/40 hover:text-ui-primary"
+            >
+              <svg class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M4 16v2a2 2 0 002 2h12a2 2 0 002-2v-2M12 4v12m0 0l-4-4m4 4l4-4"/>
+              </svg>
+              Download
+            </button>
+            <button
+              @click="copyScript"
+              :class="[
+                'flex cursor-pointer items-center gap-1.5 rounded-lg border px-3 py-1 text-xs font-medium transition-all duration-300',
+                copied
+                  ? 'border-ui-primary/60 bg-ui-primary/20 text-ui-primary'
+                  : 'border-ui-border bg-ui-card text-ui-text-muted hover:border-ui-primary/40 hover:text-ui-primary'
+              ]"
+            >
+              <svg v-if="!copied" class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                <rect x="9" y="9" width="13" height="13" rx="2" ry="2"/>
+                <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>
+              </svg>
+              <svg v-else class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/>
+              </svg>
+              {{ copied ? 'Copied!' : 'Copy' }}
+            </button>
+          </div>
         </div>
         <!-- Terminal body -->
         <div class="min-h-[300px] bg-ui-terminal p-4 lg:min-h-[450px]">
@@ -95,7 +127,23 @@ const copyScript = async () => {
       <!-- Stats bar -->
       <div class="mt-3 flex items-center justify-between rounded-lg border border-ui-border bg-ui-surface px-4 py-2 text-xs text-ui-text-muted">
         <span>{{ selectedTools.size }} tool{{ selectedTools.size !== 1 ? 's' : '' }} selected</span>
-        <span>{{ currentOS?.label }}</span>
+        <div class="flex items-center gap-3">
+          <span>{{ currentOS?.label }}</span>
+          <button
+            @click="copyShareLink"
+            :class="[
+              'flex cursor-pointer items-center gap-1.5 rounded-lg border px-3 py-1 font-medium transition-all duration-300',
+              linkCopied
+                ? 'border-ui-primary/60 bg-ui-primary/20 text-ui-primary'
+                : 'border-ui-border bg-ui-card text-ui-text-muted hover:border-ui-primary/40 hover:text-ui-primary'
+            ]"
+          >
+            <svg class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"/>
+            </svg>
+            {{ linkCopied ? 'Link copied!' : 'Share' }}
+          </button>
+        </div>
       </div>
     </div>
   </section>

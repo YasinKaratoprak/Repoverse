@@ -69,9 +69,14 @@ import {
       <div
         v-for="tool in filteredTools"
         :key="tool.id"
+        role="button"
+        tabindex="0"
+        :aria-pressed="selectedTools.has(tool.id)"
         @click="toggleTool(tool)"
+        @keydown.enter.prevent="toggleTool(tool)"
+        @keydown.space.prevent="toggleTool(tool)"
         :class="[
-          'cursor-pointer relative rounded-xl border p-4 transition-all duration-300',
+          'cursor-pointer relative rounded-xl border p-4 outline-none transition-all duration-300 focus-visible:ring-2 focus-visible:ring-ui-primary/60',
           selectedTools.has(tool.id)
             ? 'border-ui-primary/60 bg-ui-primary/8 shadow-sm'
             : 'border-ui-border bg-ui-card hover:border-ui-primary/30 hover:bg-ui-hover'
